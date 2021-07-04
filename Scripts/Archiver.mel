@@ -1,0 +1,33 @@
+string $archivePath;
+string $newName;
+string $newNameEx;
+$paths = `fileDialog2 -fm 0 -ds 2 -okc "Archive" -fileFilter "Maya Binary (*.mb);;Maya ASCII (*.ma)"`;
+$archivePath = dirname($paths[0]);
+$newName = basename($paths[0],"");
+$newNameEx = basenameEx($paths[0]) + "_imgs";
+$texturePath = $archivePath + "/" + $newNameEx;
+
+sysFile -md $texturePath;
+
+$dirs = `filePathEditor -query -listDirectories ""`;
+string $dir;
+for($dir in $dirs)
+{
+    $attrs = `filePathEditor -query -ao -listFiles $dir`;
+    string $attr;
+    string $check;
+    string $check2;
+    for($attr in $attrs)
+    {
+        $check = `match ".imageName" $attr`;
+        $check2 = `match ".fileTextureName" $attr`;
+        if($check == ".imageName" || $check2 == ".fileTextureName")
+        {
+            print $attr;
+            //sysFile -copy $destWindows $srcWindows; 
+            filePathEditor -copyAndRepath $dir $texturePath $attr;
+        }
+    }
+}
+file -rn $paths[0];
+file -f -save  -options "v=0;";

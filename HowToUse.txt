@@ -1,0 +1,9 @@
+Archiver:
+1) Will repath the textures and image planes to desired file location and also will save the scene to that new location, new location should be normally a project directory
+2) Will ignore reference files and audio files.
+
+CleanAssetFiles script:
+1) will remove all display layers
+2) will remove all namespaces
+3) will bring all the objects into a single root group, if a root grp already exists it will skip this step.
+

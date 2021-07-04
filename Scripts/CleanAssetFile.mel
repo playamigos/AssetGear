@@ -1,0 +1,50 @@
+//Create one root group
+SelectAll;
+$sels = `ls -sl`;
+if(size($sels)>1)
+{
+    Group;
+}
+select -cl;
+
+//Remove all namespaces
+global proc RmNamespaces()
+{
+    string $allNamespaces[];
+    $allNamespaces = `namespaceInfo -r -lon ":"`;
+    for ($index = 0; $index < size($allNamespaces); $index++)
+    {
+        if (($allNamespaces[$index] != "UI") && ($allNamespaces[$index] != "shared"))
+        {
+            if(catch(`namespace -mergeNamespaceWithRoot -removeNamespace $allNamespaces[$index]`))
+            {
+                RmNamespaces();
+                return;
+            }
+            else
+            {
+                //Do nothing
+            }
+        }
+    }
+    $allNamespaces = `namespaceInfo -r -lon ":"`;
+    if(size($allNamespaces) > 2)
+    {
+        RmNamespaces();
+    }
+}
+RmNamespaces();
+
+
+//Remove all display layers
+string $layers[] = `ls -type  displayLayer`;
+for($i=0;$i<size($layers);$i++)
+{
+    string $layer = $layers[$i];
+    string $check = `match "default" $layer`;
+    if($check == "")
+    {
+        evalDeferred ("layerEditorDeleteLayer " + $layer);
+    }
+}
+
